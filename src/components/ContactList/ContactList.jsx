@@ -6,7 +6,13 @@ import {
   BtnItem,
 } from './Contactlist.styled';
 import { ImCross } from 'react-icons/im';
-export function ContactList({ contacts, onDelete }) {
+import { useSelector, useDispatch } from 'react-redux';
+import { getFilterContacts } from '../../redux/selectors';
+import { deleteContact } from '../../redux/contactsSlice';
+
+export function ContactList() {
+  const contacts = useSelector(getFilterContacts);
+  const dispatch = useDispatch();
   return (
     <List>
       {' '}
@@ -14,7 +20,7 @@ export function ContactList({ contacts, onDelete }) {
         <ListItem key={contact.id}>
           <NameItem color="blue">{contact.name}</NameItem>
           <ContactItem color="green">{contact.number}</ContactItem>
-          <BtnItem onClick={() => onDelete(contact.id)}>
+          <BtnItem onClick={() => dispatch(deleteContact(contact.id))}>
             Удалить
             <ImCross />
           </BtnItem>

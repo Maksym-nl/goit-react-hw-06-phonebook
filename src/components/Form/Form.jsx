@@ -1,27 +1,24 @@
 import { useState } from 'react';
-// import { Component } from 'react';
+
 import { GoSearch } from 'react-icons/go';
 import { NameLabel, Input } from './Form.styled';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from '../../redux/contactsSlice';
+import { nanoid } from 'nanoid';
+import { getContacts } from '../../redux/selectors';
 
-// export class Form extends Component {
-//   state = {
-//     name: '',
-//     number: '',
-//   };
-
-export const Form = ({ addContact }) => {
+export const Form = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
 
   const reset = () => {
     setName('');
     setNumber('');
   };
 
-  // const handleInputChange = e => {
-  //   const { name, value } = e.target;
-  //   setName({ [name]: value });
-  // };
   const handleInputChange = e => {
     const { name, value } = e.target;
     switch (name) {
@@ -34,11 +31,17 @@ export const Form = ({ addContact }) => {
       default:
         return;
     }
-    console.log(number);
   };
   const handleOnSubmit = e => {
     e.preventDefault();
-    addContact({ name, number });
+    const isExist = contacts.find(contact => {
+      return contact.name.toLowerCase() === name.toLowerCase();
+    });
+    if (isExist) {
+      alert(`${name} is Exist`);
+      return;
+    }
+    dispatch(addContact({ name, number, id: nanoid() }));
     reset();
     e.currentTarget.reset();
   };
